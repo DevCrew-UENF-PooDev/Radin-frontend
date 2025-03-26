@@ -1,5 +1,7 @@
 // app global css in SCSS form
 body {
+  font-family: 'Inter';
+  background-attachment: fixed;
   min-width: 320px;
   --tw-gradient-from-position: ;
   --tw-gradient-to-position: ;
@@ -7,8 +9,4 @@ body {
   --tw-gradient-to: #022c22 var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
   background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
-}
-
-body #q-app {
-  min-width: 320px;
 }

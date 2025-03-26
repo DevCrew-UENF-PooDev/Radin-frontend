@@ -10,8 +10,7 @@
       <header class="q-mt-sm">
         <q-img width="50px" fit="contain" src="~/assets/radinTipo.png" alt="Plataform Name Logo" />
         <div class="right">
-          <q-btn label="Login" flat />
-          <q-btn label="Sign Up" color="green" />
+          <q-btn push :label="$t('login')" color="green" />
         </div>
       </header>
 
@@ -20,28 +19,18 @@
           {{ $t('home.main_title.1') }} <span>{{ $t('home.main_title.2') }}</span>
           {{ $t('home.main_title.3') }}
         </h2>
-        <p>{{ $t('home.content') }}</p>
+        <p>{{ $t('home.sub_text') }}</p>
         <div class="buttons">
-          <q-btn icon-right="arrow_right_alt" label="Get Started" color="green" />
-          <q-btn label="Learn More" color="white" outline />
+          <q-btn push :label="$t('get_started')" color="green" />
+          <q-btn :label="$t('learn_more')" color="white" outline />
         </div>
       </div>
 
       <section class="badges">
-        <div class="badge">
-          <q-icon name="forum" size="1.2rem" />
-          <h3>Real-time Messaging</h3>
-          <p>Connect with friends instantly with our lightning-fast messaging system.</p>
-        </div>
-        <div class="badge">
-          <q-icon name="groups" size="1.2rem" />
-          <h3>Find Groups</h3>
-          <p>Create and join groups with like-minded people to share common interests.</p>
-        </div>
-        <div class="badge">
-          <q-icon name="fas fa-paint-brush" size="1.2rem" />
-          <h3>Customizable Themes</h3>
-          <p>Personalize your experience with custom themes and profile settings.</p>
+        <div class="badge" v-for="badge in badges" :key="badge.text">
+          <q-icon :name="badge.icon" size="1.2rem" />
+          <h3>{{ $t(badge.title) }}</h3>
+          <p>{{ $t(badge.text) }}</p>
         </div>
       </section>
     </div>
@@ -60,7 +49,25 @@
   </q-page>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const badges = [
+  {
+    title: 'home.badges.1.title',
+    text: 'home.badges.1.text',
+    icon: 'forum',
+  },
+  {
+    title: 'home.badges.2.title',
+    text: 'home.badges.2.text',
+    icon: 'groups',
+  },
+  {
+    title: 'home.badges.3.title',
+    text: 'home.badges.3.text',
+    icon: 'fas fa-paint-brush',
+  },
+];
+</script>
 
 <style scoped lang="css">
 header {
@@ -103,6 +110,7 @@ header .right {
   font-size: 3rem;
   line-height: 1;
   font-weight: 700;
+  margin-bottom: 0;
 }
 
 .main-content h2 span {
@@ -110,6 +118,7 @@ header .right {
 }
 
 .main-content p {
+  width: 60%;
   color: rgb(209 213 219);
   font-size: 1.125rem;
   line-height: 1.75rem;

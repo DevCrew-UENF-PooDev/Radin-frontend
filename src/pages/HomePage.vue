@@ -10,7 +10,7 @@
       <header class="q-mt-sm">
         <q-img width="50px" fit="contain" src="~/assets/radinTipo.png" alt="Plataform Name Logo" />
         <div class="right">
-          <q-btn push :label="$t('login')" color="green" />
+          <q-btn push :label="$t('login')" color="green" to="/login" />
         </div>
       </header>
 
@@ -21,7 +21,7 @@
         </h2>
         <p>{{ $t('home.sub_text') }}</p>
         <div class="buttons">
-          <q-btn push :label="$t('get_started')" color="green" />
+          <q-btn push :label="$t('get_started')" color="green" to="/register" />
           <q-btn :label="$t('learn_more')" color="white" outline />
         </div>
       </div>

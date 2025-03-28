@@ -12,7 +12,7 @@
     </RouterLink>
     <q-form @submit="onSubmit" class="form-container">
       <q-img width="100px" fit="contain" src="~/assets/radinTipo.png" alt="Plataform Name Logo" />
-      <h1>{{ $t('authentication.login.HEADER_DESCRIPTION') }}</h1>
+      <h1>{{ $t('authentication.register.HEADER_DESCRIPTION') }}</h1>
       <div class="inputs-container">
         <q-input
           v-for="field in fields"
@@ -31,20 +31,20 @@
         />
       </div>
 
-      <q-checkbox v-model="remember" :label="$t('authentication.login.REMEMBER_ME')" />
+      <q-checkbox v-model="remember" :label="$t('authentication.register.TERMS')" />
 
       <q-btn
         class="full-width"
-        :label="$t('authentication.login.SUBMIT_BUTTON')"
+        :label="$t('authentication.register.SUBMIT_BUTTON')"
         type="submit"
         color="grey-8"
         no-caps
         push
       />
       <span>
-        {{ $t('authentication.login.DOESNT_HAVE_ACCOUNT_1') }}
-        <RouterLink to="/register">
-          {{ $t('authentication.login.DOESNT_HAVE_ACCOUNT_2') }}
+        {{ $t('authentication.register.ALREADY_HAVE_ACCOUNT_1') }}
+        <RouterLink to="/login">
+          {{ $t('authentication.register.ALREADY_HAVE_ACCOUNT_2') }}
         </RouterLink>
       </span>
     </q-form>
@@ -142,26 +142,34 @@ div[aria-checked='true'] :deep(.q-checkbox__svg) {
 import { Notify } from 'quasar';
 import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
 
 const { t } = useI18n();
-const router = useRouter();
 
 interface FormField {
   key: keyof FormData;
   label: string;
-  type: 'email' | 'password';
+  type: 'email' | 'password' | 'text';
   placeholder: string;
   autocomplete: string;
   rules: ((val: string | number) => true | string)[];
 }
 
 interface FormData {
+  name: string;
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
 const fields: FormField[] = [
+  {
+    key: 'name',
+    label: t('authentication.fields.name.LABEL'),
+    type: 'text',
+    rules: [(val) => (val ? true : t('authentication.fields.name.INVALID'))],
+    autocomplete: 'name',
+    placeholder: t('authentication.fields.name.PLACEHOLDER'),
+  },
   {
     key: 'email',
     label: t('authentication.fields.mail.LABEL'),
@@ -182,17 +190,29 @@ const fields: FormField[] = [
       (val) => (val.toString().length >= 6 ? true : t('authentication.fields.password.INVALID')),
     ],
   },
+  {
+    key: 'password',
+    label: t('authentication.fields.confirm_password.LABEL'),
+    type: 'password',
+    placeholder: '••••••',
+    autocomplete: 'current-password',
+    rules: [
+      (val) =>
+        val === formData.password ? true : t('authentication.fields.confirm_password.INVALID'),
+    ],
+  },
 ];
 
 const formData = reactive<FormData>({
+  name: '',
   email: '',
   password: '',
+  confirmPassword: '',
 });
 
 const remember = ref(false);
 
-const onSubmit = async () => {
-  await router.push({ path: 'user/home' });
+const onSubmit = () => {
   Notify.create({
     color: 'green-4',
     textColor: 'white',

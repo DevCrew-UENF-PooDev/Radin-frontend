@@ -40,6 +40,7 @@ export default {
       ALREADY_HAVE_ACCOUNT_1: 'Already have an account?',
       ALREADY_HAVE_ACCOUNT_2: 'Sign in',
       SUBMIT_BUTTON: 'Create Account',
+      TERMS: 'I agree to the Terms of Service and Privacy Policy',
       SUBMIT_SUCESS: 'Successfully created account!',
     },
     fields: {

@@ -27,6 +27,7 @@
         <q-img :src="chat.artwork" alt="Chat Avatar Logo">
           <span
             class="online-status"
+            v-if="chat.members.length === 1"
             v-bind:class="{ 'is-online': chat.members.find((m) => m.isOnline) }"
           />
         </q-img>

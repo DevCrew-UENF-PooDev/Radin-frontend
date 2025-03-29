@@ -83,11 +83,6 @@ header {
   opacity: 0.05;
 }
 
-header img {
-  width: 100px;
-  height: auto;
-}
-
 header .right {
   display: flex;
   justify-content: center;

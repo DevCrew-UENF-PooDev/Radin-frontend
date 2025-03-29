@@ -22,6 +22,7 @@ export default defineConfig((ctx) => {
       // 'ionicons-v4',
       'mdi-v7',
       'fontawesome-v6',
+      'bootstrap-icons',
       // 'eva-icons',
       // 'themify',
       // 'line-awesome',

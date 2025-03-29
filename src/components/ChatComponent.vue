@@ -16,7 +16,7 @@
       </div>
       <q-btn class="menu" color="white" flat icon="mdi-dots-vertical" />
     </div>
-    <div class="messages-container">
+    <div class="messages-container" ref="messagesContainer">
       <div
         v-for="msg in chat.messages"
         :key="msg.id"
@@ -33,9 +33,36 @@
             {{ chat.members.find((member) => member.id === msg.senderId)?.name }}
           </h3>
           <p class="msg-text">{{ msg.text }}</p>
-          <span class="msg-time">{{ msg.timestamp }}</span>
+          <span class="msg-time">
+            {{ msg.timestamp }}
+            <q-icon
+              v-if="msg.senderId === currentUserId"
+              :name="
+                msg.tick === 'pending'
+                  ? 'mdi-clock-outline'
+                  : msg.tick === 'sent'
+                    ? 'mdi-check'
+                    : 'mdi-check-all'
+              "
+              v-bind:class="{ checked: msg.tick === 'read' }"
+            />
+          </span>
         </div>
       </div>
+    </div>
+    <div class="sender-message-container">
+      <q-input
+        v-model="userMessage"
+        outlined
+        type="text"
+        placeholder="Type a message..."
+        autocomplete="search"
+        bg-color="black"
+        label-color="white"
+        input-class="custom-input"
+        @keyup.enter="sendMessage"
+      />
+      <q-btn icon="bi-send" @click="sendMessage" color="grey-8" push />
     </div>
   </div>
   <div v-else class="not-selected">
@@ -129,10 +156,22 @@
 }
 
 .chat-container .messages-container .msg-container .msg-info-container .msg-time {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   font-size: 0.75rem;
   line-height: 1rem;
   color: rgb(156, 163, 175);
   margin-top: 0.25rem;
+}
+
+.chat-container .messages-container .msg-container .msg-info-container .msg-time .q-icon {
+  font-size: 1rem;
+}
+
+.chat-container .messages-container .msg-container .msg-info-container .msg-time .q-icon.checked {
+  color: #53bdeb;
 }
 
 .chat-container .container .menu {
@@ -180,6 +219,39 @@
   margin: 0;
 }
 
+.chat-container .sender-message-container {
+  display: flex;
+  width: 100%;
+  padding: 0.75rem;
+  border-top: 1px solid rgb(6 78 59 / 0.5);
+}
+
+.chat-container .sender-message-container :deep(.q-field) {
+  flex: 1;
+  margin-right: 0.7rem;
+}
+
+:deep(.q-field__control) {
+  height: 2.5rem;
+  background-color: rgb(0 0 0 / 0.6) !important;
+  border: 1px solid rgb(6 78 59 / 0.5);
+}
+
+.chat-container .sender-message-container :deep(.custom-input) {
+  flex: 1;
+  color: white;
+}
+
+.chat-container .sender-message-container .q-btn {
+  width: 2.4rem;
+  height: 2.4rem;
+}
+
+.chat-container .sender-message-container .q-btn :deep(.q-icon) {
+  font-size: 1rem;
+  color: hsl(144.9 80.4% 10%);
+}
+
 .not-selected {
   flex: 1;
   width: 100%;
@@ -191,9 +263,40 @@
 </style>
 
 <script setup lang="ts">
-import type { ChatInfoI } from 'src/interfaces/ChatInterface';
+import type { ChatInfoI, MessageI } from 'src/interfaces/ChatInterface';
+import { ref, watch, nextTick } from 'vue';
 
-defineProps<{ chat: ChatInfoI | null }>();
+const props = defineProps<{ chat: ChatInfoI | null }>();
+const emit = defineEmits(['sendMessage']);
 
 const currentUserId = 'u1'; // I need to change when I connect with the backend
+const userMessage = ref('');
+const messagesContainer = ref<HTMLDivElement | null>(null);
+
+const sendMessage = () => {
+  // I need to implement with the backend
+  if (!props.chat || !userMessage.value.trim()) return; // Prevents sending empty messages
+
+  const newMessage: MessageI = {
+    id: `m${Date.now()}`, // Generate a unique ID
+    text: userMessage.value,
+    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), // Format HH:MM
+    senderId: currentUserId,
+    tick: 'pending',
+  };
+
+  emit('sendMessage', newMessage);
+
+  userMessage.value = ''; // Clear input field
+};
+
+watch(
+  () => props.chat?.messages,
+  async () => {
+    await nextTick();
+    if (messagesContainer.value)
+      messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+  },
+  { deep: true },
+);
 </script>

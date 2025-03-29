@@ -79,6 +79,7 @@ header .q-toolbar__title {
 :deep(.q-drawer) {
   background-color: rgb(0 0 0 / 0.8);
   border-right: 1px solid rgb(6 78 59 / 0.5);
+  backdrop-filter: blur(4px);
 }
 
 .q-btn[aria-label='Menu'],

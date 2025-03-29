@@ -18,7 +18,7 @@
     </div>
     <div class="chats">
       <div
-        v-for="(chat, i) in chats"
+        v-for="(chat, i) in filteredChats"
         v-on:click="changeChat(chat)"
         :key="i"
         class="chat"
@@ -178,13 +178,21 @@
 
 <script setup lang="ts">
 import type { ChatInfoI } from 'src/interfaces/ChatInterface';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 const search = ref('');
 
-defineProps<{
+const props = defineProps<{
   chats: ChatInfoI[];
   currentChatSelectedId: string | null;
   changeChat: (chat: ChatInfoI) => void;
 }>();
+
+const filteredChats = computed(() => {
+  return props.chats.filter(
+    (chat) =>
+      chat.name.toLowerCase().includes(search.value.toLowerCase()) ||
+      chat.members.some((member) => member.name.toLowerCase().includes(search.value.toLowerCase())),
+  );
+});
 </script>

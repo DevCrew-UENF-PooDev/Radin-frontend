@@ -2,6 +2,7 @@
   <div v-if="chat" class="chat-container">
     <div class="container">
       <div class="header-content">
+        <q-btn icon="mdi-arrow-left" @click="resetChat" color="white" flat />
         <q-img :src="chat.artwork" alt="Chat Avatar Logo" />
         <div class="info">
           <h3>{{ chat.name }}</h3>
@@ -72,7 +73,7 @@
 
 <style scoped lang="scss">
 .chat-container {
-  display: flex;
+  display: none;
   flex-direction: column;
   flex: 1;
   width: 100%;
@@ -123,6 +124,7 @@
   width: 28px;
   height: 28px;
   margin-right: 0.5rem;
+  border-radius: 9999px;
 }
 
 .chat-container .messages-container .msg-container .msg-info-container {
@@ -183,6 +185,12 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
+}
+
+.chat-container .container .header-content .q-btn {
+  width: 20px;
+  height: 20px;
+  margin-right: 0.5rem;
 }
 
 .chat-container .container .header-content :deep(.q-img) {
@@ -253,6 +261,7 @@
 }
 
 .not-selected {
+  display: none;
   flex: 1;
   width: 100%;
 }
@@ -266,7 +275,7 @@
 import type { ChatInfoI, MessageI } from 'src/interfaces/ChatInterface';
 import { ref, watch, nextTick } from 'vue';
 
-const props = defineProps<{ chat: ChatInfoI | null }>();
+const props = defineProps<{ chat: ChatInfoI | null; resetChat: () => void }>();
 const emit = defineEmits(['sendMessage']);
 
 const currentUserId = 'u1'; // I need to change when I connect with the backend

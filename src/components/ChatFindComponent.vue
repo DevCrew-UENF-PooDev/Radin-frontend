@@ -50,6 +50,7 @@
 <style scoped lang="scss">
 .find-container {
   display: flex;
+  flex: 1;
   flex-direction: column;
   width: 20rem;
   background-color: rgb(0 0 0 / 0.4);

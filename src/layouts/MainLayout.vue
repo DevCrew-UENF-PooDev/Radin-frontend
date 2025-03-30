@@ -4,11 +4,14 @@
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
         <q-toolbar-title>Home</q-toolbar-title>
-        <q-btn dense flat round icon="menu" />
+        <q-img
+          class="user-profile-menu"
+          fit="contain"
+          src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sora"
+          alt="User Avatar"
+          @click="openProfileMenu"
+        />
       </q-toolbar>
-      <!-- <q-avatar>
-        <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
-      </q-avatar> -->
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" v-if="showMenu()" side="left" show-if-above elevated>
@@ -87,13 +90,6 @@ header .q-toolbar__title {
   display: block;
 }
 
-@media only screen and (min-width: 1024px) {
-  .q-btn[aria-label='Menu'],
-  .q-btn[aria-label='Close'] {
-    display: none;
-  }
-}
-
 .drawer-header {
   display: flex;
   align-items: center;
@@ -132,10 +128,9 @@ header .q-toolbar__title {
   font-weight: 500;
 }
 
-.content .navigation-buttons button:hover :deep(.q-focus-helper),
-.content .navigation-buttons button.active :deep(.q-focus-helper) {
-  background-color: red;
-  opacity: 0.2;
+.content .navigation-buttons button:hover,
+.content .navigation-buttons button.active {
+  background-color: rgba(255, 0, 0, 0.2);
 }
 
 .content .navigation-buttons :deep(.q-icon) {
@@ -148,6 +143,19 @@ header .q-toolbar__title {
   font-weight: 300;
   font-size: 0.875rem;
   line-height: 1.25rem;
+}
+
+.user-profile-menu {
+  width: 30px;
+  cursor: pointer;
+  border-radius: 9999px;
+}
+
+@media only screen and (min-width: 1024px) {
+  .q-btn[aria-label='Menu'],
+  .q-btn[aria-label='Close'] {
+    display: none;
+  }
 }
 </style>
 
@@ -162,6 +170,9 @@ console.log(currentPath);
 const showMenu = () => route.meta.showHeader;
 
 const leftDrawerOpen = ref(false);
+
+const openProfileMenu = () => {};
+
 const toggleLeftDrawer = () => (leftDrawerOpen.value = !leftDrawerOpen.value);
 const closeLeftDrawer = () => (leftDrawerOpen.value = false);
 </script>

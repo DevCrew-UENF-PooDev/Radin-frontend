@@ -2,11 +2,17 @@
   <q-page>
     <div class="main-container">
       <chat-find-component
+        v-bind:class="{ 'is-chat-selected': currentChatSelected !== null }"
         :chats="chats"
         :change-chat="changeChat"
         :current-chat-selected-id="currentChatSelected ? currentChatSelected.id : null"
       />
-      <chat-component :chat="currentChatSelected" @sendMessage="handleSendMessage" />
+      <chat-component
+        v-bind:class="{ 'is-chat-selected': currentChatSelected !== null }"
+        :reset-chat="resetChat"
+        :chat="currentChatSelected"
+        @sendMessage="handleSendMessage"
+      />
     </div>
   </q-page>
 </template>
@@ -15,11 +21,38 @@
 .q-page {
   padding: 1rem;
 }
+
 .main-container {
   display: flex;
   height: 87vh;
   border: 1px solid rgb(6 78 59 / 0.5);
   border-radius: 10px;
+}
+
+.main-container .find-container.is-chat-selected {
+  display: none;
+}
+
+.main-container .chat-container.is-chat-selected {
+  display: flex;
+}
+
+@media only screen and (min-width: 768px) {
+  .main-container .find-container {
+    flex: none;
+  }
+
+  .main-container .find-container.is-chat-selected {
+    display: flex;
+  }
+
+  .main-container .chat-container {
+    display: flex;
+  }
+
+  .main-container .not-selected {
+    display: block;
+  }
 }
 </style>
 
@@ -150,8 +183,9 @@ const changeChat = (chat: ChatInfoI) => {
   currentChatSelected.value = chat;
 };
 
+const resetChat = () => (currentChatSelected.value = null);
+
 const handleSendMessage = (newMessage: MessageI) => {
-  console.log('dfww');
   if (!currentChatSelected.value) return;
 
   // Find the chat and update messages

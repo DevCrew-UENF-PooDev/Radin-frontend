@@ -142,8 +142,13 @@ div[aria-checked='true'] :deep(.q-checkbox__svg) {
 import { Notify } from 'quasar';
 import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
+import { registerApi } from 'src/api/auth';
+
+import type { ErrorResponseI } from 'src/interfaces/GenericInterface';
 
 const { t } = useI18n();
+const router = useRouter();
 
 interface FormField {
   key: keyof FormData;
@@ -191,7 +196,7 @@ const fields: FormField[] = [
     ],
   },
   {
-    key: 'password',
+    key: 'confirmPassword',
     label: t('authentication.fields.confirm_password.LABEL'),
     type: 'password',
     placeholder: '••••••',
@@ -212,12 +217,34 @@ const formData = reactive<FormData>({
 
 const remember = ref(false);
 
-const onSubmit = () => {
-  Notify.create({
-    color: 'green-4',
-    textColor: 'white',
-    icon: 'cloud_done',
-    message: 'Submitted',
-  });
+const onSubmit = async () => {
+  if (formData.password === formData.confirmPassword) {
+    try {
+      const response = await registerApi(formData.name, formData.email, formData.password);
+      Notify.create({
+        color: 'green-4',
+        textColor: 'white',
+        icon: 'cloud_done',
+        message: response.data.message,
+      });
+      if (response.status === 201) await router.push({ path: 'login' });
+    } catch (error) {
+      const errorCode = (error as ErrorResponseI).response.data.error;
+      console.error(errorCode);
+      Notify.create({
+        progress: true,
+        position: 'bottom-right',
+        message: errorCode,
+        type: 'negative',
+        actions: [
+          {
+            icon: 'close',
+            color: 'white',
+            round: true,
+          },
+        ],
+      });
+    }
+  }
 };
 </script>

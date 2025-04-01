@@ -60,7 +60,12 @@
 import ChatFindComponent from 'components/ChatFindComponent.vue';
 import ChatComponent from 'components/ChatComponent.vue';
 import type { ChatInfoI, MessageI, UserInfoI } from 'src/interfaces/ChatInterface';
+// import { historyApi } from 'src/api/chat';
 import { ref } from 'vue';
+
+// const loadHistory = async () => {
+//   console.log(await historyApi());
+// };
 
 const user1: UserInfoI = {
   id: 'u1',

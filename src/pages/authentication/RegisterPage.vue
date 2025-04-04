@@ -139,16 +139,13 @@ div[aria-checked='true'] :deep(.q-checkbox__svg) {
 </style>
 
 <script setup lang="ts">
-import { Notify } from 'quasar';
 import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
-import { registerApi } from 'src/api/auth';
 
-import type { ErrorResponseI } from 'src/interfaces/GenericInterface';
+import { useUserStore } from 'src/stores/userStore';
+const user = useUserStore();
 
 const { t } = useI18n();
-const router = useRouter();
 
 interface FormField {
   key: keyof FormData;
@@ -160,15 +157,15 @@ interface FormField {
 }
 
 interface FormData {
-  name: string;
+  username: string;
   email: string;
   password: string;
-  confirmPassword: string;
+  passwordConfirmation: string;
 }
 
 const fields: FormField[] = [
   {
-    key: 'name',
+    key: 'username',
     label: t('authentication.fields.name.LABEL'),
     type: 'text',
     rules: [(val) => (val ? true : t('authentication.fields.name.INVALID'))],
@@ -196,7 +193,7 @@ const fields: FormField[] = [
     ],
   },
   {
-    key: 'confirmPassword',
+    key: 'passwordConfirmation',
     label: t('authentication.fields.confirm_password.LABEL'),
     type: 'password',
     placeholder: '••••••',
@@ -209,42 +206,20 @@ const fields: FormField[] = [
 ];
 
 const formData = reactive<FormData>({
-  name: '',
+  username: '',
   email: '',
   password: '',
-  confirmPassword: '',
+  passwordConfirmation: '',
 });
 
 const remember = ref(false);
 
 const onSubmit = async () => {
-  if (formData.password === formData.confirmPassword) {
-    try {
-      const response = await registerApi(formData.name, formData.email, formData.password);
-      Notify.create({
-        color: 'green-4',
-        textColor: 'white',
-        icon: 'cloud_done',
-        message: response.data.message,
-      });
-      if (response.status === 201) await router.push({ path: 'login' });
-    } catch (error) {
-      const errorCode = (error as ErrorResponseI).response.data.error;
-      console.error(errorCode);
-      Notify.create({
-        progress: true,
-        position: 'bottom-right',
-        message: errorCode,
-        type: 'negative',
-        actions: [
-          {
-            icon: 'close',
-            color: 'white',
-            round: true,
-          },
-        ],
-      });
-    }
-  }
+  await user.register(
+    formData.username,
+    formData.email,
+    formData.password,
+    formData.passwordConfirmation,
+  );
 };
 </script>

@@ -139,15 +139,13 @@ div[aria-checked='true'] :deep(.q-checkbox__svg) {
 </style>
 
 <script setup lang="ts">
-import { Cookies, Notify } from 'quasar';
-import { loginApi } from 'src/api/auth';
-import type { ErrorResponseI } from 'src/interfaces/GenericInterface';
 import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
+
+import { useUserStore } from 'src/stores/userStore';
+const user = useUserStore();
 
 const { t } = useI18n();
-const router = useRouter();
 
 interface FormField {
   key: keyof FormData;
@@ -193,43 +191,5 @@ const formData = reactive<FormData>({
 
 const remember = ref(false);
 
-const onSubmit = async () => {
-  try {
-    const response = await loginApi(formData.email, formData.password);
-    Notify.create({
-      progress: true,
-      position: 'bottom-right',
-      message: t('authentication.login.SUBMIT_SUCESS'),
-      type: 'positive',
-      actions: [
-        {
-          icon: 'close',
-          color: 'white',
-          round: true,
-        },
-      ],
-    });
-    if (response.status === 200) {
-      Cookies.set('isAuthenticated', 'true', { expires: '58m', path: '/' });
-      Cookies.set('token', response.data.access_token);
-      await router.push({ path: 'user/home' });
-    }
-  } catch (error) {
-    const errorCode = (error as ErrorResponseI).response.data.error;
-    console.error(errorCode);
-    Notify.create({
-      progress: true,
-      position: 'bottom-right',
-      message: errorCode,
-      type: 'negative',
-      actions: [
-        {
-          icon: 'close',
-          color: 'white',
-          round: true,
-        },
-      ],
-    });
-  }
-};
+const onSubmit = async () => await user.login(formData.email, formData.password);
 </script>

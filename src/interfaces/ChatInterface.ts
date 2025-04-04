@@ -1,13 +1,20 @@
 export interface UserInfoI {
   id: string;
   artwork: string;
-  name: string;
+  username: string;
   isOnline: boolean;
+}
+
+export interface AttachmentI {
+  id: string;
+  type: 'image' | 'audio' | 'file';
+  url: string; // URL do arquivo armazenado
+  duration?: number; // Duração em segundos (para áudios)
 }
 
 export interface MessageI {
   id: string;
-  text: string;
+  text?: string;
   timestamp: string;
   senderId: string;
   tick: 'none' | 'pending' | 'sent' | 'delivered' | 'read';
@@ -16,6 +23,7 @@ export interface MessageI {
   // sent - Foi enviada para o servidor (mas, ainda não recebida pelos outros)
   // delivered - Todos receberam (mas, não leram ainda)
   // read - Todos receberam e leram
+  attachments?: AttachmentI[];
 }
 
 export interface ChatInfoI {

@@ -70,35 +70,35 @@ import { ref } from 'vue';
 const user1: UserInfoI = {
   id: 'u1',
   artwork: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sora',
-  name: 'Sora',
+  username: 'Sora',
   isOnline: true,
 };
 
 const user2: UserInfoI = {
   id: 'u2',
   artwork: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alex',
-  name: 'Alex',
+  username: 'Alex',
   isOnline: false,
 };
 
 const user3: UserInfoI = {
   id: 'u3',
   artwork: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jamie',
-  name: 'Jamie',
+  username: 'Jamie',
   isOnline: true,
 };
 
 const user4: UserInfoI = {
   id: 'u4',
   artwork: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Morgan',
-  name: 'Morgan',
+  username: 'Morgan',
   isOnline: false,
 };
 
 const user5: UserInfoI = {
   id: 'u5',
   artwork: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor',
-  name: 'Taylor',
+  username: 'Taylor',
   isOnline: true,
 };
 

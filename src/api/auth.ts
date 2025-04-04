@@ -1,28 +1,19 @@
 import { api } from 'src/boot/axios';
+import type { UserInfoI } from 'src/interfaces/ChatInterface';
+import type { GenericResponseI } from 'src/interfaces/GenericInterface';
 
-interface UserData {
-  email: string;
-  name: string;
-}
-
-interface ResponseLoginData {
+interface LoginResponseI {
   message: string;
-  user: UserData;
+  user: UserInfoI;
   access_token: string;
 }
 
-interface ResponseRegisterData {
-  message: string;
-}
-
 export const loginApi = async (email: string, password: string) => {
-  return await api.post<ResponseLoginData>('/signin', { email, password });
+  return await api.post<LoginResponseI>('/auth/login', { email, password });
 };
 
-export const registerApi = async (name: string, email: string, password: string) => {
-  return await api.post<ResponseRegisterData>('/signup', { email, password, name });
+export const registerApi = async (username: string, email: string, password: string) => {
+  return await api.post<GenericResponseI>('/auth/register', { email, password, username });
 };
 
-export const logoutApi = async () => {
-  return await api.post('/logout');
-};
+export const logoutApi = async () => await api.post('/auth/logout');

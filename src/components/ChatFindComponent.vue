@@ -193,7 +193,9 @@ const filteredChats = computed(() => {
   return props.chats.filter(
     (chat) =>
       chat.name.toLowerCase().includes(search.value.toLowerCase()) ||
-      chat.members.some((member) => member.name.toLowerCase().includes(search.value.toLowerCase())),
+      chat.members.some((member) =>
+        member.username.toLowerCase().includes(search.value.toLowerCase()),
+      ),
   );
 });
 </script>

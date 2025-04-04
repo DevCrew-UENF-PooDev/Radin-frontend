@@ -31,7 +31,7 @@
         />
         <div class="msg-info-container">
           <h3 v-if="chat.members.length > 1" class="msg-sender">
-            {{ chat.members.find((member) => member.id === msg.senderId)?.name }}
+            {{ chat.members.find((member) => member.id === msg.senderId)?.username }}
           </h3>
           <p class="msg-text">{{ msg.text }}</p>
           <span class="msg-time">

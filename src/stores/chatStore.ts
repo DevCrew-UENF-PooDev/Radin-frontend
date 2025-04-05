@@ -26,6 +26,7 @@ export const useChatStore = defineStore('chats', {
       try {
         const response = await listChatsApi();
         this.chats = response.data.chats;
+
         const members = this.chats.flatMap((chat) => chat.members);
         for (const member of members) if (member.status === 'Online') member.is_online = true;
       } catch (error) {

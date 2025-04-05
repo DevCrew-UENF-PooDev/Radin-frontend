@@ -6,7 +6,7 @@ import { Cookies } from 'quasar';
 import type { ErrorResponseI } from 'src/interfaces/GenericInterface';
 import { usePaginationStore } from './paginationStore';
 import { useChatStore } from './chatStore';
-import { joinChat, leaveChat, socket } from 'src/utils/socket';
+import { joinChat, leaveChat, messageDelivered, messageRead, socket } from 'src/utils/socket';
 
 const paginationStore = usePaginationStore();
 const chatStore = useChatStore();
@@ -78,12 +78,16 @@ export const useUserStore = defineStore('user', {
       socket.connect();
       for (const chat of chatStore.chats) {
         joinChat(chat.id);
+        for (const msg of chat.messages) if (msg.tick === 'sent') messageDelivered(msg.id);
       }
     },
+    readAllChatMessages() {
+      if (chatStore.currentChat)
+        for (const msg of chatStore.currentChat.messages)
+          if (msg.tick !== 'read') messageRead(msg.id);
+    },
     disconnectSocket() {
-      for (const chat of chatStore.chats) {
-        leaveChat(chat.id);
-      }
+      for (const chat of chatStore.chats) leaveChat(chat.id);
       socket.disconnect();
     },
   },

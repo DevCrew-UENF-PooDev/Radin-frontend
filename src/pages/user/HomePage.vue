@@ -70,11 +70,15 @@ const userStore = useUserStore();
 onMounted(async () => {
   await chatStore.getAllUserChats();
   userStore.conectSocket();
+  userStore.readAllChatMessages();
 });
 
 onUnmounted(() => userStore.disconnectSocket());
 
-const changeChat = (chat: ChatInfoI) => (chatStore.currentChatId = chat.id);
+const changeChat = (chat: ChatInfoI) => {
+  chatStore.currentChatId = chat.id;
+  userStore.readAllChatMessages();
+};
 
 const resetChat = () => (chatStore.currentChatId = null);
 

@@ -1,7 +1,10 @@
-import { Cookies } from 'quasar';
 import { api } from 'src/boot/axios';
+import type { ChatInfoI } from 'src/interfaces/ChatInterface';
 
-export const historyApi = async () => {
-  const token = Cookies.get('token');
-  return await api.get('/history', { headers: { Authorization: `Bearer ${token}` } });
+export const listChatsApi = async () => {
+  return await api.get<{ chats: ChatInfoI[] }>('/chats');
+};
+
+export const createPrivateChatApi = async (targetUserId: string) => {
+  return await api.post<{ chat: ChatInfoI }>('/chats/private', { targetUserId });
 };

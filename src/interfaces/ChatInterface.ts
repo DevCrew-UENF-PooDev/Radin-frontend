@@ -2,7 +2,7 @@ export interface UserInfoI {
   id: string;
   artwork: string;
   username: string;
-  isOnline: boolean;
+  status: string;
 }
 
 export interface AttachmentI {
@@ -14,8 +14,8 @@ export interface AttachmentI {
 
 export interface MessageI {
   id: string;
-  text?: string;
-  timestamp: string;
+  text: string;
+  created_at: string;
   senderId: string;
   tick: 'none' | 'pending' | 'sent' | 'delivered' | 'read';
   // none - Mensagem dos outros usuários

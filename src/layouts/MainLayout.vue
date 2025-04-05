@@ -3,7 +3,7 @@
     <q-header v-if="showMenu()" elevated>
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-        <q-toolbar-title>Home</q-toolbar-title>
+        <q-toolbar-title>{{ pathName }}</q-toolbar-title>
         <q-img
           class="user-profile-menu"
           fit="contain"
@@ -37,6 +37,7 @@
             aria-label="Home"
             color="white"
             no-caps
+            to="/user/home"
             v-bind:class="{ active: '/user/home' === currentPath }"
           />
           <q-btn
@@ -46,6 +47,7 @@
             aria-label="Friends"
             color="white"
             no-caps
+            to="/user/friends"
             v-bind:class="{ active: '/user/friends' === currentPath }"
           />
           <q-btn
@@ -55,6 +57,7 @@
             aria-label="Groups"
             color="white"
             no-caps
+            to="/user/groups"
             v-bind:class="{ active: '/user/groups' === currentPath }"
           />
         </div>
@@ -121,15 +124,15 @@ header .q-toolbar__title {
   gap: 0.5rem;
 }
 
-.content .navigation-buttons button {
+.content .navigation-buttons a {
   width: 100%;
   padding: 0.5rem 1rem;
   border-radius: 5px;
   font-weight: 500;
 }
 
-.content .navigation-buttons button:hover,
-.content .navigation-buttons button.active {
+.content .navigation-buttons a:hover,
+.content .navigation-buttons a.active {
   background-color: rgba(255, 0, 0, 0.2);
 }
 
@@ -138,7 +141,7 @@ header .q-toolbar__title {
   color: #ab9292;
 }
 
-.content .navigation-buttons button :deep(.q-btn__content) {
+.content .navigation-buttons a :deep(.q-btn__content) {
   justify-content: start;
   font-weight: 300;
   font-size: 0.875rem;
@@ -165,7 +168,14 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 
 const currentPath = computed(() => route.path);
-console.log(currentPath);
+
+const pathName = computed(() =>
+  currentPath.value === '/user/home'
+    ? 'Home'
+    : currentPath.value === '/user/friends'
+      ? 'Users'
+      : 'Groups',
+);
 
 const showMenu = () => route.meta.showHeader;
 

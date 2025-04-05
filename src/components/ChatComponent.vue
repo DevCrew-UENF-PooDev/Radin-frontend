@@ -3,15 +3,21 @@
     <div class="container">
       <div class="header-content">
         <q-btn icon="mdi-arrow-left" @click="resetChat" color="white" flat />
-        <q-img :src="chat.artwork" alt="Chat Avatar Logo" />
+        <q-img
+          :src="
+            chat.artwork ||
+            'https://api.dicebear.com/9.x/initials/svg?seed=' + chat.members[0]?.username
+          "
+          alt="Chat Avatar Logo"
+        />
         <div class="info">
-          <h3>{{ chat.name }}</h3>
+          <h3>{{ chat.name || chat.members[0]?.username }}</h3>
           <p v-if="chat.members.length > 1">
-            {{ chat.members.filter((m) => m.isOnline).length }} online •
+            {{ chat.members.filter((m) => m.status === 'Online').length }} online •
             {{ chat.members.length }} members
           </p>
           <p v-else>
-            {{ chat.members.filter((m) => m.isOnline).length ? 'Online' : 'Offline' }}
+            {{ chat.members[0]?.status }}
           </p>
         </div>
       </div>
@@ -35,7 +41,7 @@
           </h3>
           <p class="msg-text">{{ msg.text }}</p>
           <span class="msg-time">
-            {{ msg.timestamp }}
+            {{ msg.created_at }}
             <q-icon
               v-if="msg.senderId === currentUserId"
               :name="
@@ -289,9 +295,9 @@ const sendMessage = () => {
   const newMessage: MessageI = {
     id: `m${Date.now()}`, // Generate a unique ID
     text: userMessage.value,
-    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), // Format HH:MM
     senderId: currentUserId,
     tick: 'pending',
+    created_at: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), // Format HH:MM
   };
 
   emit('sendMessage', newMessage);

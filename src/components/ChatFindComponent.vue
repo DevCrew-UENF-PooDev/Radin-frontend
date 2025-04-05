@@ -24,22 +24,30 @@
         class="chat"
         v-bind:class="{ selected: chat.id === currentChatSelectedId }"
       >
-        <q-img :src="chat.artwork" alt="Chat Avatar Logo">
+        <q-img
+          :src="
+            chat.artwork ||
+            'https://api.dicebear.com/9.x/initials/svg?seed=' + chat.members[0]?.username
+          "
+          alt="Chat Avatar Logo"
+        >
           <span
             class="online-status"
             v-if="chat.members.length === 1"
-            v-bind:class="{ 'is-online': chat.members.find((m) => m.isOnline) }"
+            v-bind:class="{ 'is-online': chat.members.find((m) => m.status === 'Online') }"
           />
         </q-img>
         <div class="info">
           <div class="first">
-            <h3>{{ chat.name }}</h3>
-            <span>{{ chat.messages[chat.messages.length - 1]?.timestamp }}</span>
+            <h3>{{ chat.name || chat.members[0]?.username }}</h3>
+            <span>{{ chat.messages[chat.messages.length - 1]?.created_at || 'Nunca' }}</span>
           </div>
-          <p class="last-message">{{ chat.messages[chat.messages.length - 1]?.text }}</p>
+          <p class="last-message">
+            {{ chat.messages[chat.messages.length - 1]?.text || 'Inicie uma conversa' }}
+          </p>
           <p v-if="chat.members.length > 1" class="group-info">
             {{ chat.members.length }} members •
-            {{ chat.members.filter((m) => m.isOnline).length }} online
+            {{ chat.members.filter((m) => m.status === 'online').length }} online
           </p>
         </div>
       </div>

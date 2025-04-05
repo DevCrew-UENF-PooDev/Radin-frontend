@@ -24,6 +24,11 @@ const routes: RouteRecordRaw[] = [
             component: () => import('pages/user/HomePage.vue'),
             meta: { showHeader: true },
           },
+          {
+            path: 'friends',
+            component: () => import('pages/user/UsersPage.vue'),
+            meta: { showHeader: true },
+          },
         ],
       },
     ],

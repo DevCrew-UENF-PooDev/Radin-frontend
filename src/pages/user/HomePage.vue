@@ -2,15 +2,15 @@
   <q-page>
     <div class="main-container">
       <chat-find-component
-        v-bind:class="{ 'is-chat-selected': currentChatSelected !== null }"
-        :chats="chats"
+        v-bind:class="{ 'is-chat-selected': chatStore.currentChat !== null }"
+        :chats="chatStore.chats"
         :change-chat="changeChat"
-        :current-chat-selected-id="currentChatSelected ? currentChatSelected.id : null"
+        :current-chat-selected-id="chatStore.currentChat ? chatStore.currentChat.id : null"
       />
       <chat-component
-        v-bind:class="{ 'is-chat-selected': currentChatSelected !== null }"
+        v-bind:class="{ 'is-chat-selected': chatStore.currentChat !== null }"
         :reset-chat="resetChat"
-        :chat="currentChatSelected"
+        :chat="chatStore.currentChat"
         @sendMessage="handleSendMessage"
       />
     </div>
@@ -59,142 +59,22 @@
 <script setup lang="ts">
 import ChatFindComponent from 'components/ChatFindComponent.vue';
 import ChatComponent from 'components/ChatComponent.vue';
-import type { ChatInfoI, MessageI, UserInfoI } from 'src/interfaces/ChatInterface';
-// import { historyApi } from 'src/api/chat';
-import { ref } from 'vue';
+import type { ChatInfoI, MessageI } from 'src/interfaces/ChatInterface';
+import { onMounted } from 'vue';
+import { useChatStore } from 'src/stores/chatStore';
 
-// const loadHistory = async () => {
-//   console.log(await historyApi());
-// };
+const chatStore = useChatStore();
 
-const user1: UserInfoI = {
-  id: 'u1',
-  artwork: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sora',
-  username: 'Sora',
-  isOnline: true,
-};
+onMounted(async () => {
+  await chatStore.getAllUserChats();
+});
 
-const user2: UserInfoI = {
-  id: 'u2',
-  artwork: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alex',
-  username: 'Alex',
-  isOnline: false,
-};
+const changeChat = (chat: ChatInfoI) => (chatStore.currentChatId = chat.id);
 
-const user3: UserInfoI = {
-  id: 'u3',
-  artwork: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jamie',
-  username: 'Jamie',
-  isOnline: true,
-};
-
-const user4: UserInfoI = {
-  id: 'u4',
-  artwork: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Morgan',
-  username: 'Morgan',
-  isOnline: false,
-};
-
-const user5: UserInfoI = {
-  id: 'u5',
-  artwork: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Taylor',
-  username: 'Taylor',
-  isOnline: true,
-};
-
-const chat1: ChatInfoI = {
-  id: '1',
-  artwork: 'https://api.dicebear.com/7.x/identicon/svg?seed=GamingSquad',
-  name: 'Gaming Squad',
-  messages: [
-    {
-      id: 'm1',
-      text: "Hey team, who's up for a match tonight?",
-      timestamp: '18:00',
-      senderId: user2.id,
-      tick: 'none',
-    },
-    { id: 'm2', text: "I'm in!", timestamp: '18:05', senderId: user3.id, tick: 'none' },
-    { id: 'm3', text: 'Count me in too.', timestamp: '18:10', senderId: user4.id, tick: 'none' },
-  ],
-  members: [user2, user3, user4],
-};
-
-const chat2: ChatInfoI = {
-  id: '2',
-  artwork: 'https://api.dicebear.com/7.x/identicon/svg?seed=ProjectAlpha',
-  name: 'Project Alpha',
-  messages: [
-    {
-      id: 'm4',
-      text: "Let's finalize the UI design by tomorrow.",
-      timestamp: '15:30',
-      senderId: user3.id,
-      tick: 'none',
-    },
-    {
-      id: 'm5',
-      text: "I'll update the specs now.",
-      timestamp: '15:35',
-      senderId: user5.id,
-      tick: 'none',
-    },
-  ],
-  members: [user3, user5],
-};
-
-const chat3: ChatInfoI = {
-  id: '3',
-  artwork: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alex',
-  name: 'Alex',
-  messages: [
-    {
-      id: 'm6',
-      text: 'Hey Alex, how are you?',
-      timestamp: 'Yesterday 20:00',
-      senderId: user1.id,
-      tick: 'read',
-    },
-    {
-      id: 'm7',
-      text: "I'm doing fine, Sora. What about you?",
-      timestamp: 'Yesterday 20:05',
-      senderId: user2.id,
-      tick: 'none',
-    },
-    {
-      id: 'm8',
-      text: 'What?',
-      timestamp: 'Today 00:00',
-      senderId: user1.id,
-      tick: 'delivered',
-    },
-    {
-      id: 'm8',
-      text: 'Read my message!',
-      timestamp: 'Today 12:00',
-      senderId: user1.id,
-      tick: 'sent',
-    },
-  ],
-  members: [user2],
-};
-
-const chats = ref([chat1, chat2, chat3]);
-
-const currentChatSelected = ref<ChatInfoI | null>(null);
-
-const changeChat = (chat: ChatInfoI) => {
-  currentChatSelected.value = chat;
-};
-
-const resetChat = () => (currentChatSelected.value = null);
+const resetChat = () => (chatStore.currentChatId = null);
 
 const handleSendMessage = (newMessage: MessageI) => {
-  if (!currentChatSelected.value) return;
-
-  // Find the chat and update messages
-  const chatIndex = chats.value.findIndex((chat) => chat.id === currentChatSelected.value?.id);
-  if (chatIndex !== -1) chats.value[chatIndex]?.messages.push(newMessage);
+  if (!chatStore.currentChatId) return;
+  chatStore.currentChat?.messages.push(newMessage);
 };
 </script>

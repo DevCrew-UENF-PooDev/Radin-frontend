@@ -4,6 +4,11 @@ import { showNotify } from 'src/utils/notifier';
 import { loginApi, logoutApi, registerApi } from 'src/api/auth';
 import { Cookies } from 'quasar';
 import type { ErrorResponseI } from 'src/interfaces/GenericInterface';
+import { usePaginationStore } from './paginationStore';
+import { useChatStore } from './chatStore';
+
+const paginationStore = usePaginationStore();
+const chatStore = useChatStore();
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -41,6 +46,9 @@ export const useUserStore = defineStore('user', {
         if (response.status === 200) {
           this.isAuthenticated = true;
           this.userProfile = response.data.user;
+          this.$reset();
+          paginationStore.$reset();
+          chatStore.$reset();
           Cookies.set('isAuthenticated', 'true', { expires: '58m', path: '/' });
           await this.router.push({ path: 'user/home' });
         }
@@ -55,6 +63,8 @@ export const useUserStore = defineStore('user', {
         showNotify(response.data.message);
         if (response.status === 200) {
           this.$reset();
+          paginationStore.$reset();
+          chatStore.$reset();
           Cookies.remove('isAuthenticated');
           await this.router.push('/login');
         }

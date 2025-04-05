@@ -34,20 +34,28 @@
           <span
             class="online-status"
             v-if="chat.members.length === 1"
-            v-bind:class="{ 'is-online': chat.members.find((m) => m.status === 'Online') }"
+            v-bind:class="{
+              'is-online': chat.members.find((m) => m.is_online),
+            }"
           />
         </q-img>
         <div class="info">
           <div class="first">
             <h3>{{ chat.name || chat.members[0]?.username }}</h3>
-            <span>{{ chat.messages[chat.messages.length - 1]?.created_at || 'Nunca' }}</span>
+            <span>{{
+              chat.messages && chat.messages.length > 0
+                ? formatDistanceToNow(chat.messages[chat.messages.length - 1]!.created_at, {
+                    locale: ptBR,
+                  })
+                : 'Nunca'
+            }}</span>
           </div>
           <p class="last-message">
             {{ chat.messages[chat.messages.length - 1]?.text || 'Inicie uma conversa' }}
           </p>
           <p v-if="chat.members.length > 1" class="group-info">
             {{ chat.members.length }} members •
-            {{ chat.members.filter((m) => m.status === 'online').length }} online
+            {{ chat.members.filter((m) => m.is_online).length }} online
           </p>
         </div>
       </div>
@@ -186,6 +194,8 @@
 </style>
 
 <script setup lang="ts">
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import type { ChatInfoI } from 'src/interfaces/ChatInterface';
 import { computed, ref } from 'vue';
 

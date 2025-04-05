@@ -60,14 +60,19 @@
 import ChatFindComponent from 'components/ChatFindComponent.vue';
 import ChatComponent from 'components/ChatComponent.vue';
 import type { ChatInfoI, MessageI } from 'src/interfaces/ChatInterface';
-import { onMounted } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 import { useChatStore } from 'src/stores/chatStore';
+import { useUserStore } from 'src/stores/userStore';
 
 const chatStore = useChatStore();
+const userStore = useUserStore();
 
 onMounted(async () => {
   await chatStore.getAllUserChats();
+  userStore.conectSocket();
 });
+
+onUnmounted(() => userStore.disconnectSocket());
 
 const changeChat = (chat: ChatInfoI) => (chatStore.currentChatId = chat.id);
 

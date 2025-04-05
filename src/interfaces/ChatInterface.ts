@@ -2,6 +2,7 @@ export interface UserInfoI {
   id: string;
   artwork: string;
   username: string;
+  is_online: boolean | null;
   status: string;
 }
 
@@ -16,7 +17,8 @@ export interface MessageI {
   id: string;
   text: string;
   created_at: string;
-  senderId: string;
+  sender_id: string;
+  chat_id: string;
   tick: 'none' | 'pending' | 'sent' | 'delivered' | 'read';
   // none - Mensagem dos outros usuários
   // pending -  Esperando para ser enviada (sem conexão com a rede)

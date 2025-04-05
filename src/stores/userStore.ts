@@ -6,6 +6,7 @@ import { Cookies } from 'quasar';
 import type { ErrorResponseI } from 'src/interfaces/GenericInterface';
 import { usePaginationStore } from './paginationStore';
 import { useChatStore } from './chatStore';
+import { joinChat, leaveChat, socket } from 'src/utils/socket';
 
 const paginationStore = usePaginationStore();
 const chatStore = useChatStore();
@@ -44,11 +45,10 @@ export const useUserStore = defineStore('user', {
         const response = await loginApi(email, password);
         showNotify(response.data.message);
         if (response.status === 200) {
-          this.isAuthenticated = true;
-          this.userProfile = response.data.user;
-          this.$reset();
           paginationStore.$reset();
           chatStore.$reset();
+          this.isAuthenticated = true;
+          this.userProfile = response.data.user;
           Cookies.set('isAuthenticated', 'true', { expires: '58m', path: '/' });
           await this.router.push({ path: 'user/home' });
         }
@@ -73,7 +73,21 @@ export const useUserStore = defineStore('user', {
         showNotify(errorCode, 'negative');
       }
     },
+    conectSocket() {
+      socket.io.opts.query = { userId: this.userProfile?.id };
+      socket.connect();
+      for (const chat of chatStore.chats) {
+        joinChat(chat.id);
+      }
+    },
+    disconnectSocket() {
+      for (const chat of chatStore.chats) {
+        leaveChat(chat.id);
+      }
+      socket.disconnect();
+    },
   },
+
   persistedState: {
     key: 'user',
     storage: sessionStorage,

@@ -9,7 +9,6 @@
   "scripts": {
     "lint": "eslint -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
-    "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
     "build": "quasar build",
     "postinstall": "quasar prepare"
@@ -17,9 +16,11 @@
   "dependencies": {
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
+    "date-fns": "^4.1.0",
     "pinia": "^3.0.1",
     "pinia-plugin-persistedstate-2": "^2.0.30",
     "quasar": "^2.16.0",
+    "socket.io-client": "^4.8.1",
     "vue": "^3.4.18",
     "vue-i18n": "^11.0.0",
     "vue-router": "^4.0.12"

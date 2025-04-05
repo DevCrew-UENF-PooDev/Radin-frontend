@@ -2,7 +2,7 @@
   <div v-if="chat" class="chat-container">
     <div class="container">
       <div class="header-content">
-        <q-btn icon="mdi-arrow-left" @click="resetChat" color="white" flat />
+        <q-btn class="back-btn" icon="mdi-arrow-left" @click="resetChat" color="white" flat />
         <q-img
           :src="
             chat.artwork ||
@@ -28,22 +28,22 @@
         v-for="msg in chat.messages"
         :key="msg.id"
         class="msg-container"
-        v-bind:class="{ 'current-user-msg': msg.senderId === currentUserId }"
+        v-bind:class="{ 'current-user-msg': msg.sender_id === userStore.userProfile?.id }"
       >
         <q-img
-          v-if="msg.senderId !== currentUserId"
-          :src="chat.members.find((member) => member.id === msg.senderId)?.artwork"
+          v-if="msg.sender_id !== userStore.userProfile?.id"
+          :src="chat.members.find((member) => member.id === msg.sender_id)?.artwork"
           alt="Chat Avatar Logo"
         />
         <div class="msg-info-container">
           <h3 v-if="chat.members.length > 1" class="msg-sender">
-            {{ chat.members.find((member) => member.id === msg.senderId)?.username }}
+            {{ chat.members.find((member) => member.id === msg.sender_id)?.username }}
           </h3>
           <p class="msg-text">{{ msg.text }}</p>
           <span class="msg-time">
-            {{ msg.created_at }}
+            {{ formatDistanceToNow(msg.created_at, { locale: ptBR }) }}
             <q-icon
-              v-if="msg.senderId === currentUserId"
+              v-if="msg.sender_id === userStore.userProfile?.id"
               :name="
                 msg.tick === 'pending'
                   ? 'mdi-clock-outline'
@@ -92,6 +92,16 @@
   justify-content: space-between;
   padding: 0.9rem;
   border-bottom: 1px solid rgb(6 78 59 / 0.5);
+}
+
+.back-btn {
+  display: block;
+}
+
+@media only screen and (min-width: 768px) {
+  .back-btn {
+    display: none;
+  }
 }
 
 .chat-container .messages-container {
@@ -278,29 +288,35 @@
 </style>
 
 <script setup lang="ts">
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import type { ChatInfoI, MessageI } from 'src/interfaces/ChatInterface';
+import { useUserStore } from 'src/stores/userStore';
+import { sendChatMessage } from 'src/utils/socket';
 import { ref, watch, nextTick } from 'vue';
 
 const props = defineProps<{ chat: ChatInfoI | null; resetChat: () => void }>();
 const emit = defineEmits(['sendMessage']);
 
-const currentUserId = 'u1'; // I need to change when I connect with the backend
+const userStore = useUserStore();
+
 const userMessage = ref('');
 const messagesContainer = ref<HTMLDivElement | null>(null);
 
 const sendMessage = () => {
-  // I need to implement with the backend
-  if (!props.chat || !userMessage.value.trim()) return; // Prevents sending empty messages
+  if (!props.chat || !userMessage.value.trim() || !userStore.userProfile) return;
 
   const newMessage: MessageI = {
-    id: `m${Date.now()}`, // Generate a unique ID
+    id: `m${Date.now()}`, // Generate a temporary unique ID
     text: userMessage.value,
-    senderId: currentUserId,
+    sender_id: userStore.userProfile.id,
+    chat_id: props.chat.id,
     tick: 'pending',
-    created_at: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), // Format HH:MM
+    created_at: new Date().toISOString(),
   };
 
   emit('sendMessage', newMessage);
+  sendChatMessage(newMessage.chat_id, newMessage.id, newMessage.text);
 
   userMessage.value = ''; // Clear input field
 };
